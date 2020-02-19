@@ -1,0 +1,59 @@
+<html>
+<head>
+<body>
+    <script type="text/javascript" src="js/ev.js"></script>
+    <script type="text/javascript" src="js/swfobject-2.2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <script>
+
+    function uid() {
+        var result='';
+        for(var i=0; i<32; i++)
+        result += Math.floor(Math.random()*16).toString(16).toUpperCase();
+        return result
+    }
+
+    var ec = new evercookie();
+    ec.get("id", function(value) {
+        if(value===undefined){
+            var newId = uid();
+            ec.set("id", newId);
+            var request = new XMLHttpRequest();
+
+            request.open('Get', '/cookie-app/pixel?id='+newId);
+            var div=document.getElementById("viewerId")
+            div.innerHTML = "New Viewer Id is:"+newId
+            request.onload = function () {
+
+                document.getElementById("image").src = JSON.parse(request.responseText).image;
+
+            };
+            request.send();
+        }
+        else {
+            var div=document.getElementById("viewerId")
+            div.innerHTML = "Existing Viewer Id is:"+value
+
+            var request2 = new XMLHttpRequest();
+            request2.open('Get', '/cookie-app/getimage?id='+value);
+            request2.onload = function () {
+              document.getElementById("image").src = JSON.parse(request2.responseText).image;
+            };
+            request2.send();
+        }
+    });
+    </script>
+</head>
+
+
+ <br>
+  <!--<input type="text" id="myText" value="code"><br>
+  
+  <button onclick="setCookie()">Click me</button>-->
+    <div id="viewerId" >
+
+    </div>
+    <img src="" id="image" height="200" width="200">
+</body>
+</html>
